@@ -1,0 +1,34 @@
+import nltk
+from nltk.corpus import PlaintextCorpusReader
+from bs4 import BeautifulSoup
+from nltk import FreqDist
+from nltk.collocations import *
+corpus=PlaintextCorpusReader('.','.*\.txt')
+text=corpus.raw('HW_WikipediaDiscussions.txt')
+soup=BeautifulSoup(text)
+text=soup.get_text()
+tokens=nltk.word_tokenize(text)
+words=[w.lower() for w in tokens if w.isalpha()]
+stopwords=nltk.corpus.stopwords.words('english')
+new_words=[w for w in words if w not in stopwords]
+fd=FreqDist(new_words)
+top50=fd.most_common(50)
+for w in top50:
+...  print(w[0],w[1])
+
+for w in top50:
+...  print(w[0],w[1]/len(tokens))
+
+bigram_measures=nltk.collocations.BigramAssocMeasures()
+finder=BigramCollocationFinder.from_words(words)
+scored=finder.score_ngrams(bigram_measures.raw_freq)
+scored[:50]
+
+finder.apply_word_filter(lambda w: w in stopwords)
+scored=finder.score_ngrams(bigram_measures.raw_freq)
+scored[:50]
+
+finder1=BigramCollocationFinder.from_words(words)
+finder1.apply_freq_filter(5)
+scored1=finder1.score_ngrams(bigram_measures.pmi)
+scored1[:50]
